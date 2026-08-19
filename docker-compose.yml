@@ -37,6 +37,9 @@ services:
       args:
         - JWT_SECRET=${JWT_SECRET}
         - CSRF_SECRET=${CSRF_SECRET}
+        - FRONTEND_URL=${FRONTEND_URL}
+        - TRUST_PROXY=${TRUST_PROXY}
+        - ENFORCE_HTTPS_REDIRECT=${ENFORCE_HTTPS_REDIRECT}
     container_name: excalidash-backend
     environment:
       - DATABASE_PROVIDER=sqlite
@@ -45,7 +48,9 @@ services:
       - NODE_ENV=production
       - AUTH_MODE=${AUTH_MODE:-local}
       # Keep disabled by default; only enable when a trusted proxy sanitizes forwarded headers.
-      - TRUST_PROXY=false
+      - TRUST_PROXY=${TRUST_PROXY}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - ENFORCE_HTTPS_REDIRECT=${ENFORCE_HTTPS_REDIRECT}
       # Optional for single-instance deployments:
       # if unset, backend auto-generates and persists one in the volume.
       # Recommended to set explicitly for portability and multi-instance setups.
