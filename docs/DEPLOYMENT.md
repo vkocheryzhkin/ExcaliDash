@@ -7,7 +7,7 @@ This page contains the advanced deployment, authentication, OIDC, offline, backu
 <details>
 <summary>Reverse Proxy / Traefik</summary>
 
-When running ExcaliDash behind Traefik, Nginx, or another reverse proxy, configure both containers so that API + WebSocket calls resolve correctly:
+When running ExcaliDash behind Traefik, Nginx, Caddy, or another reverse proxy, configure both containers so that API + WebSocket calls resolve correctly:
 
 | Variable                 | Purpose                                                                                                                                                                   |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -36,6 +36,22 @@ frontend:
     # For Kubernetes, use the service DNS name:
     - BACKEND_URL=excalidash-backend.default.svc.cluster.local:8000
 ```
+
+### Caddy (HTTPS on a VPS)
+
+The frontend image already includes Nginx (static files + `/api` + `/socket.io`). Do not add a second Nginx. Put Caddy in front for Let's Encrypt:
+
+`Internet → Caddy :443 → frontend Nginx :80 → backend :8000`
+
+```bash
+cp .env.example .env
+# Set CADDY_DOMAIN, CADDY_EMAIL, FRONTEND_URL=https://<your-domain>
+# Set TRUST_PROXY=1, ENFORCE_HTTPS_REDIRECT=false, FRONTEND_BIND=127.0.0.1
+# Point DNS A/AAAA at the server, then:
+docker compose --profile https up -d --build
+```
+
+Caddy is opt-in (`profiles: [https]`) so `docker compose up` still serves HTTP on port 6767 for local use. On the VPS, allow 80/443 (and 22); keep 6767 off the public interface via `FRONTEND_BIND=127.0.0.1`.
 
 </details>
 

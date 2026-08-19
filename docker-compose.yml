@@ -1,3 +1,11 @@
+# HTTPS on a VPS (Caddy + Let's Encrypt). Extra nginx is not needed: the
+# frontend image already serves the SPA and proxies /api and /socket.io.
+#
+#   cp .env.example .env   # set CADDY_DOMAIN, CADDY_EMAIL, FRONTEND_URL
+#   docker compose --profile https up -d --build
+#
+# Point DNS A/AAAA at the server first. Open 80/443 (and 22). Leave 6767 firewalled.
+
 services:
   frontend:
     build:
@@ -5,7 +13,7 @@ services:
       dockerfile: frontend/Dockerfile
     container_name: excalidash-frontend
     ports:
-      - "6767:80"
+      - "${FRONTEND_BIND:-0.0.0.0}:6767:80"
     environment:
       # Backend URL for nginx proxy (host:port format, no protocol)
       # Override for reverse proxy setups (e.g., excalidash-backend.svc.cluster.local:8000)
@@ -34,12 +42,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-      args:
-        - JWT_SECRET=${JWT_SECRET}
-        - CSRF_SECRET=${CSRF_SECRET}
-        - FRONTEND_URL=${FRONTEND_URL}
-        - TRUST_PROXY=${TRUST_PROXY}
-        - ENFORCE_HTTPS_REDIRECT=${ENFORCE_HTTPS_REDIRECT}
     container_name: excalidash-backend
     environment:
       - DATABASE_PROVIDER=sqlite
@@ -48,9 +50,9 @@ services:
       - NODE_ENV=production
       - AUTH_MODE=${AUTH_MODE:-local}
       # Keep disabled by default; only enable when a trusted proxy sanitizes forwarded headers.
-      - TRUST_PROXY=${TRUST_PROXY}
-      - FRONTEND_URL=${FRONTEND_URL}
-      - ENFORCE_HTTPS_REDIRECT=${ENFORCE_HTTPS_REDIRECT}
+      - TRUST_PROXY=${TRUST_PROXY:-false}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:6767}
+      - ENFORCE_HTTPS_REDIRECT=${ENFORCE_HTTPS_REDIRECT:-true}
       # Optional for single-instance deployments:
       # if unset, backend auto-generates and persists one in the volume.
       # Recommended to set explicitly for portability and multi-instance setups.
@@ -87,9 +89,38 @@ services:
       timeout: 10s
       retries: 3
 
+  caddy:
+    image: caddy:2-alpine
+    container_name: excalidash-caddy
+    profiles: ["https"]
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      - CADDY_DOMAIN=${CADDY_DOMAIN:-}
+      - CADDY_EMAIL=${CADDY_EMAIL:-}
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      frontend:
+        condition: service_healthy
+    networks:
+      - excalidash-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:2019/config/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
 networks:
   excalidash-network:
     driver: bridge
 
 volumes:
   backend-data:
+  caddy-data:
+  caddy-config:
