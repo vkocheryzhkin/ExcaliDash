@@ -44,14 +44,18 @@ The frontend image already includes Nginx (static files + `/api` + `/socket.io`)
 `Internet → Caddy :443 → frontend Nginx :80 → backend :8000`
 
 ```bash
+# Local (Caddy off):
+docker compose up -d --build
+
+# VPS HTTPS:
 cp .env.example .env
-# Set CADDY_DOMAIN, CADDY_EMAIL, FRONTEND_URL=https://<your-domain>
-# Set TRUST_PROXY=1, ENFORCE_HTTPS_REDIRECT=false, FRONTEND_BIND=127.0.0.1
+# Uncomment the VPS block and set CADDY_DOMAIN, CADDY_EMAIL,
+# FRONTEND_URL=https://<your-domain>, TRUST_PROXY=1, FRONTEND_BIND=127.0.0.1
 # Point DNS A/AAAA at the server, then:
 docker compose --profile https up -d --build
 ```
 
-Caddy is opt-in (`profiles: [https]`) so `docker compose up` still serves HTTP on port 6767 for local use. On the VPS, allow 80/443 (and 22); keep 6767 off the public interface via `FRONTEND_BIND=127.0.0.1`.
+Caddy is opt-in (`profiles: [https]`). `docker compose up` serves HTTP on port 6767 and does not start Caddy. On the VPS, allow 80/443 (and 22); keep 6767 off the public interface via `FRONTEND_BIND=127.0.0.1`.
 
 </details>
 

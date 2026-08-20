@@ -30,7 +30,7 @@ COPY frontend/nginx.conf.template /etc/nginx/nginx.conf.template
 
 # Copy entrypoint script
 COPY frontend/docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
+RUN sed -i 's/\r$//' /docker-entrypoint.sh /etc/nginx/nginx.conf.template && chmod +x /docker-entrypoint.sh
 
 # Copy built application from builder
 COPY --from=builder /app/frontend/dist /usr/share/nginx/html

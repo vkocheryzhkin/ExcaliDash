@@ -6,7 +6,7 @@ export const PasswordResetRequest: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <Logo className="mx-auto h-12 w-auto" />
+          <Logo className="mx-auto h-20 w-auto" />
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
             Password help
           </h2>

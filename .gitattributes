@@ -1,0 +1,4 @@
+# Keep shell scripts Unix-formatted so Alpine Docker images can exec them.
+*.sh text eol=lf
+*.template text eol=lf
+Caddyfile text eol=lf

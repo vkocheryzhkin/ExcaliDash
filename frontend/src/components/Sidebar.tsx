@@ -92,8 +92,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className="text-2xl text-slate-900 dark:text-white flex items-center gap-3 tracking-tight"
             style={{ fontFamily: displayFontFamily }}
           >
-            <Logo className="w-10 h-10" />
-            <span className="mt-1">ExcaliDash</span>
+            <Logo className="h-10 w-auto" />
+            <span className="mt-1">Tutobox</span>
             <span
               className="text-xs font-bold text-red-500 mt-2"
               style={{ fontFamily: "sans-serif" }}

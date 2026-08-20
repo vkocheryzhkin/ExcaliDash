@@ -1,9 +1,10 @@
-# HTTPS on a VPS (Caddy + Let's Encrypt). Extra nginx is not needed: the
-# frontend image already serves the SPA and proxies /api and /socket.io.
+# Local build / check (Caddy stays off):
+#   docker compose up -d --build
+#   open http://localhost:6767
 #
-#   cp .env.example .env   # set CADDY_DOMAIN, CADDY_EMAIL, FRONTEND_URL
+# VPS HTTPS (Caddy + Let's Encrypt). Extra nginx is not needed: the frontend
+# image already serves the SPA and proxies /api and /socket.io.
 #   docker compose --profile https up -d --build
-#
 # Point DNS A/AAAA at the server first. Open 80/443 (and 22). Leave 6767 firewalled.
 
 services:

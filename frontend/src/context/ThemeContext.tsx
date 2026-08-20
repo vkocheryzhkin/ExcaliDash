@@ -38,7 +38,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
     if (link) {
-      link.href = theme === 'dark' ? '/favicon-dark.svg' : '/favicon-light.svg';
+      link.href = '/favicon.png';
     }
 
     if (theme === 'dark') {

@@ -96,15 +96,15 @@ export const AuthSetupChoice: React.FC = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-6 flex items-center justify-center">
       <div className="mx-auto w-full max-w-2xl">
         <div className="text-center mb-8">
-          <Logo className="mx-auto h-12 w-auto" />
+          <Logo className="mx-auto h-20 w-auto" />
           <h1 className="mt-6 text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white leading-tight">
             {step === 'choice' ? 'Choose Authentication Mode' : 'Keep Authentication Disabled?'}
           </h1>
           <p className="mt-4 text-sm sm:text-base text-gray-600 dark:text-gray-300">
             {step === 'choice'
               ? isMigrationMode
-                ? 'We detected existing data from an earlier ExcaliDash version.'
-                : 'This looks like a new ExcaliDash setup.'
+                ? 'We detected existing data from an earlier Tutobox version.'
+                : 'This looks like a new Tutobox setup.'
               : 'This option is only recommended for private, trusted networks.'}
           </p>
         </div>
@@ -129,7 +129,7 @@ export const AuthSetupChoice: React.FC = () => {
 
               {isMigrationMode && (
                 <div className="mb-6 rounded-lg border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/20 p-4 text-sm text-blue-800 dark:text-blue-200">
-                  ExcaliDash v0.4 adds multi-user and OIDC support. Enabling authentication secures upgraded instances before sharing access.
+                  Tutobox v0.4 adds multi-user and OIDC support. Enabling authentication secures upgraded instances before sharing access.
                 </div>
               )}
 
